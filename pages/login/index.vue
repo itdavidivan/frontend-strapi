@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import { useStrapiAuth } from "#imports";
 export default {
   data() {
     return {
@@ -47,23 +47,17 @@ export default {
   methods: {
     async handleSubmit() {
       try {
-        const response = await axios.post(
-          "http://localhost:1337/api/auth/local", // Login endpoint
-          {
-            identifier: this.email, // Use 'identifier' instead of 'email' in Strapi login API
-            password: this.password,
-          }
-        );
-
-        // On successful login, show the success message and reset error
-        this.message = "Prihlásenie bolo úspešné";
-        this.error = null; // Clear error if login is successful
-        this.$router.push("/cars");
+        const { login } = useStrapiAuth();
+        await login({ identifier: this.email, password: this.password });
+        this.$router.push("/profile");
+        this.message = "Login successful!"; // Set the success message
+        this.error = null;
       } catch (error) {
-        // If error occurs, show the error message
-        this.error = "Nesprávne meno alebo heslo.";
-        this.message = null; // Clear success message if there's an error
+        this.error = error.response.data.message[0].messages[0].message;
+        this.message = null; // Clear the success message
       }
+      this.email = ""; // Clear form fields
+      this.password = "";
     },
   },
 };
