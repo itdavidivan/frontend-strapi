@@ -24,14 +24,11 @@ export default {
       cars: [] as Car[],
     };
   },
-  methods: {
-    async fetchingData() {
-      const response = await axios.get("http://localhost:1337/api/cars");
-      this.cars = response.data.data;
-    },
-  },
-  mounted() {
-    this.fetchingData();
+  methods: {},
+  async mounted() {
+    const { find } = useStrapi();
+    const response = (await find("cars")).data;
+    this.cars = response as Car[];
   },
 };
 </script>
