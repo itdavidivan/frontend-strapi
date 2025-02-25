@@ -1,27 +1,38 @@
 <template>
   <div class="profile-list">
-    <div class="profile-card">
-      <h2>{{ person.name }}</h2>
+    <div v-if="person === null">Loading...</div>
+    <div v-else class="profile-card">
+      <h2>{{ person.username }}</h2>
       <p>Email: {{ person.email }}</p>
-      <p>Role: {{ person.role }}</p>
+      <p>Role: {{ person.provider }}</p>
       <!-- Add more fields as needed -->
+      <button @click="logoutUser">Logout</button>
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import type { Profile } from "~/types";
+import { useStrapiAuth } from "#imports";
 export default {
   data() {
     return {
-      person: {
-        name: null,
-        email: null,
-        role: null,
-      },
+      person: null as Profile | null,
     };
   },
   methods: {
-    name() {},
+    logoutUser() {
+      const { logout } = useStrapiAuth();
+      this.$router.push("/login");
+      logout();
+    },
+  },
+  async mounted() {
+    const { fetchUser } = useStrapiAuth();
+
+    const user = await fetchUser();
+    console.log(user);
+    this.person = user;
   },
 };
 </script>
