@@ -59,7 +59,7 @@ export default {
     async handleSubmit() {
       try {
         const response = await axios.post(
-          "http://localhost:1337/api/auth/local/register",
+          "https://strapi-app-3so9.onrender.com/api/auth/local/register",
           {
             username: this.username,
             email: this.email,
