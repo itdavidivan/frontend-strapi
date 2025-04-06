@@ -7,7 +7,7 @@
           <h2 class="car-name">{{ car.name }}</h2>
           <h3 class="car-description">{{ car.description }}</h3>
           <h4 class="car-price">{{ car.price }}$</h4>
-          <img :src="car.picture" alt="" />
+          <img :src="car.picture" alt="Car image" />
         </div>
       </div>
     </div>
@@ -21,14 +21,19 @@ import axios from "axios";
 export default {
   data() {
     return {
-      cars: [] as Car[],
+      cars: [] as Car[], // Pole pre ukladanie automobilov
     };
   },
-  methods: {},
   async mounted() {
-    const { find } = useStrapi();
-    const response = (await find("cars")).data;
-    this.cars = response as Car[];
+    try {
+      // Zavolanie Strapi API cez axios
+      const response = await axios.get(
+        "https://strapi-app-3so9.onrender.com/api/cars"
+      ); // Zmeň URL na tvoje Strapi API URL
+      this.cars = response.data.data; // Nastavenie získaných dát do premennej cars
+    } catch (error) {
+      console.error("Error fetching cars:", error);
+    }
   },
 };
 </script>
@@ -60,7 +65,6 @@ img {
 
 .car-container {
   display: grid;
-
   gap: 20px;
   margin-top: 20px;
   width: 100%;
