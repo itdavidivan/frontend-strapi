@@ -85,16 +85,19 @@ export default {
   },
   methods: {
     async postingOrders() {
-      const response = await axios.post("http://localhost:1337/api/orders", {
-        data: {
-          name: this.name,
-          surname: this.surname,
-          email: this.email,
-          mobile: this.mobile,
-          country: this.country,
-          product: this.product,
-        },
-      });
+      const response = await axios.post(
+        "https://strapi-app-3so9.onrender.com/api/orders",
+        {
+          data: {
+            name: this.name,
+            surname: this.surname,
+            email: this.email,
+            mobile: this.mobile,
+            country: this.country,
+            product: this.product,
+          },
+        }
+      );
       this.message = "Order placed successfully!";
       this.name = ""; // Clear form fields
       this.surname = "";
