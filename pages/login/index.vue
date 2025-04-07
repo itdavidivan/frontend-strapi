@@ -33,22 +33,23 @@
   </div>
 </template>
 
-<script>
-import { useStrapiAuth } from "#imports";
+<script lang="ts">
+import axios from "axios";
+
 export default {
   data() {
     return {
       email: "",
       password: "",
-      error: null,
-      message: null, // Set to null initially
+      error: null as string | null,
+      message: null as string | null, // Set to null initially
     };
   },
   methods: {
-    async handleSubmit() {
+    async handleSubmit(): Promise<void> {
       try {
         // Send login request via API
-        const response = await axios.post(
+        const response = await axios.post<{ jwt: string }>(
           "https://strapi-app-3so9.onrender.com/api/auth/local",
           {
             identifier: this.email,
@@ -57,10 +58,10 @@ export default {
         );
 
         // Assuming the response contains a JWT token, extract it
-        const token = response.data.jwt;
+        const jwt = response.data.jwt;
 
         // Store the token in localStorage or sessionStorage
-        localStorage.setItem("authToken", token); // or sessionStorage.setItem('authToken', token);
+        localStorage.setItem("jwt", jwt); // or sessionStorage.setItem('authToken', token);
 
         // Redirect to profile page
         this.$router.push("/");
@@ -68,17 +69,21 @@ export default {
         // Set the success message
         this.message = "Login successful!";
         this.error = null;
-      } catch (error) {
+      } catch (error: unknown) {
         // Handle any errors that occurred during login
-        this.error =
-          error.response?.data?.message[0]?.messages[0]?.message ||
-          "An error occurred.";
+        if (axios.isAxiosError(error)) {
+          this.error =
+            error.response?.data?.message[0]?.messages[0]?.message ||
+            "An error occurred during login.";
+        } else {
+          this.error = "An unexpected error occurred.";
+        }
         this.message = null; // Clear success message if an error occurs
+      } finally {
+        // Clear form fields after submission
+        this.email = "";
+        this.password = "";
       }
-
-      // Clear form fields after submission
-      this.email = "";
-      this.password = "";
     },
   },
 };
