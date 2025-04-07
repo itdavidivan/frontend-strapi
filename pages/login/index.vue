@@ -47,33 +47,36 @@ export default {
   methods: {
     async handleSubmit() {
       try {
-        const { login } = useStrapiAuth();
-        const response = await login({
-          identifier: this.email,
-          password: this.password,
-        });
+        // Send login request via API
+        const response = await axios.post(
+          "https://strapi-app-3so9.onrender.com/api/auth/local",
+          {
+            identifier: this.email,
+            password: this.password,
+          }
+        );
 
-        // Assuming the response contains the token, store it
-        const token = response.data.jwt; // Adjust based on the actual response format
+        // Assuming the response contains a JWT token, extract it
+        const token = response.data.jwt;
 
-        // Store token in localStorage (or sessionStorage depending on your needs)
+        // Store the token in localStorage or sessionStorage
         localStorage.setItem("authToken", token); // or sessionStorage.setItem('authToken', token);
 
-        // Navigate to the profile page
-        this.$router.push("/profile");
+        // Redirect to profile page
+        this.$router.push("/");
 
-        // Success message
+        // Set the success message
         this.message = "Login successful!";
         this.error = null;
       } catch (error) {
-        // Handle the error and set the appropriate error message
+        // Handle any errors that occurred during login
         this.error =
           error.response?.data?.message[0]?.messages[0]?.message ||
           "An error occurred.";
-        this.message = null; // Clear the success message
+        this.message = null; // Clear success message if an error occurs
       }
 
-      // Clear form fields
+      // Clear form fields after submission
       this.email = "";
       this.password = "";
     },
