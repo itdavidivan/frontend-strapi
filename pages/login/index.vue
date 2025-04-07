@@ -48,15 +48,33 @@ export default {
     async handleSubmit() {
       try {
         const { login } = useStrapiAuth();
-        await login({ identifier: this.email, password: this.password });
+        const response = await login({
+          identifier: this.email,
+          password: this.password,
+        });
+
+        // Assuming the response contains the token, store it
+        const token = response.data.jwt; // Adjust based on the actual response format
+
+        // Store token in localStorage (or sessionStorage depending on your needs)
+        localStorage.setItem("authToken", token); // or sessionStorage.setItem('authToken', token);
+
+        // Navigate to the profile page
         this.$router.push("/profile");
-        this.message = "Login successful!"; // Set the success message
+
+        // Success message
+        this.message = "Login successful!";
         this.error = null;
       } catch (error) {
-        this.error = error.response.data.message[0].messages[0].message;
+        // Handle the error and set the appropriate error message
+        this.error =
+          error.response?.data?.message[0]?.messages[0]?.message ||
+          "An error occurred.";
         this.message = null; // Clear the success message
       }
-      this.email = ""; // Clear form fields
+
+      // Clear form fields
+      this.email = "";
       this.password = "";
     },
   },
