@@ -6,7 +6,9 @@
         <h1>Vitajte v našom E-shope</h1>
         <p>Objavte najnovšie produkty a výnimočné ponuky</p>
         <div class="cta-buttons">
-          <nuxt-link to="/cars" class="cta-button">Pozrieť produkty</nuxt-link>
+          <nuxt-link v-if="isAuthenticated" to="/cars" class="cta-button"
+            >Pozrieť produkty</nuxt-link
+          >
           <nuxt-link to="/login" class="cta-button login-btn"
             >Prihlásiť sa</nuxt-link
           >
@@ -65,7 +67,19 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      isAuthenticated: false,
+    };
+  },
+  mounted() {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      this.isAuthenticated = true;
+    }
+  },
+};
 </script>
 
 <style scoped>
